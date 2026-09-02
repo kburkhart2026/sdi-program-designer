@@ -1,0 +1,79 @@
+/* ============================================================
+   SDI PROGRAM DESIGNER — tool-specific tokens
+
+   Layers on top of design-system/tokens/*.css. Two kinds of thing live here:
+     1. Values that are specific to this tool (course palette, fixed panel
+        widths, the dense internal-tool type scale).
+     2. Three accessibility corrections to design-system values. Each is
+        measured and justified below -- see docs/accessibility.md.
+   ============================================================ */
+:root {
+  /* --- Course masthead palette, cycled by course index -----------------
+     Not part of the base design system. Twelve muted, SDI-adjacent colours;
+     all are dark enough for white text at any weight. Order is load-bearing:
+     course identity is carried by index % 12, and the tab strip repeats it. */
+  --course-0:  #4F0A12;  /* maroon       */
+  --course-1:  #2C3B2D;  /* dark green   */
+  --course-2:  #1F2E3D;  /* navy         */
+  --course-3:  #4A4A2E;  /* olive        */
+  --course-4:  #7A3B18;  /* burnt orange */
+  --course-5:  #3A3F44;  /* slate        */
+  --course-6:  #6B4F2A;  /* bronze       */
+  --course-7:  #402232;  /* plum         */
+  --course-8:  #23392F;  /* forest       */
+  --course-9:  #6E3B2E;  /* clay         */
+  --course-10: #2E3A44;  /* steel        */
+  --course-11: #54341C;  /* umber        */
+
+  /* --- Ad-hoc tints the layouts depend on --- */
+  --tint-drag:    #FDECEF;              /* drag-over fill on a week card */
+  --tint-warn:    #FFF8E6;              /* overlap warning panel, duplicate rows */
+  --tint-drop:    rgba(213, 0, 50, .06);/* drop-zone fill */
+
+  /* --- ACCESSIBILITY CORRECTION 1 ------------------------------------
+     The spec uses --gray-400 (#9A9A94) for the "Drag lessons here" placeholder
+     and inactive WEEK n labels. Measured 2.83:1 on white and 2.61:1 on
+     --gray-50 -- both fail WCAG 2.1 AA 1.4.3 (needs 4.5:1).
+     --gray-500 carries the same "quiet" role at 5.13:1 / 4.74:1.
+     --gray-400 is still fine for non-text use (borders, dashed rules). */
+  --text-quiet: var(--gray-500);
+
+  /* --- ACCESSIBILITY CORRECTION 2 ------------------------------------
+     --amber (#C77700) is the duplication/overlap signal. As *text* on
+     --sdi-bone it measures 2.79:1 -- fails. This darkened amber measures
+     5.14:1 on bone and 6.03:1 on the --tint-warn panel.
+     Keep --amber itself for fills, bars and rules, where 1.4.11's 3:1 applies. */
+  --amber-text: #8A5200;
+
+  /* --- ACCESSIBILITY CORRECTION 3 ------------------------------------
+     Outline buttons on the maroon/black bands specced a
+     rgba(255,255,255,.35) border = 2.88:1, failing 1.4.11 (3:1 for UI
+     component boundaries). .45 measures 3.93:1 and is visually near-identical. */
+  --border-on-dark:       rgba(255, 255, 255, .45);
+  --border-on-dark-hover: rgba(255, 255, 255, .70);
+  --surface-on-dark-hover: rgba(255, 255, 255, .12);
+
+  /* --- Fixed dimensions (docs/design-tokens.md) --- */
+  --h-appbar:        50px;
+  --w-panel-left:   290px;
+  --w-panel-right:  326px;
+  --w-rail:          34px;
+  --w-lesson-col:   340px;
+  --min-lesson-col: 210px;
+  --min-text-col:   130px;
+  --min-grid:       860px;
+  --max-setup:      880px;
+  --max-map:       1080px;
+
+  /* --- The dense internal-tool type scale ---------------------------
+     The design system's fluid scale is for marketing pages. These tools use a
+     fixed small scale. Nothing below 9px; grid text stays at 11.5px minimum. */
+  --fs-eyebrow:  9.5px;
+  --fs-colhead:  9px;
+  --fs-micro:   10px;
+  --fs-meta:    11px;
+  --fs-row:     11.5px;
+  --fs-cell:    12px;
+  --fs-ui:      12.5px;
+  --fs-app:     13px;
+}

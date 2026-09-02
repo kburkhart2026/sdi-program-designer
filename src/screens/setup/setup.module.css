@@ -1,0 +1,246 @@
+/* ============================================================
+   Program setup — the Program Designer entry screen.
+   Full-bleed maroon; the user declares the shape before any authoring begins.
+   ============================================================ */
+
+.screen {
+  height: 100%;
+  overflow: auto;
+  background: var(--sdi-maroon);
+}
+
+.column {
+  max-width: var(--max-setup);
+  margin: 0 auto;
+  padding: 44px 28px 56px;
+}
+
+/* ---------- masthead ---------- */
+.masthead { display: flex; align-items: center; gap: 14px; color: var(--gray-0); }
+.shield { height: 44px; width: auto; display: block; }
+.title {
+  font: 700 26px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 2px 0 0;
+}
+.introRow { display: flex; align-items: flex-end; gap: 24px; margin-top: 12px; flex-wrap: wrap; }
+.intro {
+  color: rgba(255, 255, 255, .72); /* 8.22:1 on maroon */
+  font-size: var(--fs-app);
+  line-height: var(--lh-normal);
+  max-width: 600px;
+  text-wrap: pretty;
+  margin: 0;
+}
+.introAction { margin-left: auto; flex-shrink: 0; }
+
+/* ---------- form card ---------- */
+.form {
+  background: var(--gray-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  margin-top: 26px;
+  overflow: hidden;
+}
+.section {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nameInput {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 15px;
+  border: var(--bw-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+.nameInput:focus-visible { border-color: var(--sdi-red); }
+
+/* ---------- program type ---------- */
+.typeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.typeCard {
+  text-align: left;
+  padding: 11px 13px;
+  border: var(--bw-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--gray-0);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.typeCard:hover { border-color: var(--sdi-red); }
+.typeCardOn { border-color: var(--sdi-red); background: var(--sdi-bone); }
+.typeLabel {
+  font: 700 var(--fs-cell) var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--sdi-black);
+}
+.typeHint { font-size: var(--fs-meta); color: var(--gray-500); line-height: 1.4; margin-top: 3px; }
+
+.stepperGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+/* ---------- credential chips ---------- */
+.credWrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 132px; overflow-y: auto; }
+.optional { font-weight: 400; color: var(--gray-500); text-transform: none; letter-spacing: 0; }
+
+/* ---------- course reuse ---------- */
+.reuseList { display: flex; flex-direction: column; gap: 6px; }
+.reuseProgram { border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.reuseHead {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  background: var(--gray-50);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--fs-cell);
+  color: var(--sdi-black);
+}
+.reuseHead:hover { background: var(--gray-100); }
+.reuseName { font-weight: 600; }
+.reuseMeta { color: var(--gray-500); font-size: var(--fs-meta); margin-left: auto; }
+.reuseBody { padding: 8px 11px 10px; display: flex; flex-direction: column; gap: 5px; }
+.reuseActions { display: flex; gap: 6px; margin-bottom: 3px; }
+.reuseCourse {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-cell);
+  padding: 3px 2px;
+  cursor: pointer;
+}
+.reuseCourse:hover { color: var(--sdi-red); }
+.reuseCourseCode { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); }
+.reuseCount { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); }
+.overflowNote {
+  font-size: var(--fs-meta);
+  color: var(--amber-text);
+  background: var(--tint-warn);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+}
+
+/* ---------- footer bar ---------- */
+.footer {
+  background: var(--sdi-black);
+  color: var(--gray-0);
+  padding: 13px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.summary { font-size: var(--fs-cell); color: rgba(255, 255, 255, .82); }
+
+/* ---------- saved programs ---------- */
+.savedHead { margin-top: 34px; margin-bottom: 12px; }
+.savedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.savedCard {
+  position: relative;
+  background: var(--gray-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.savedCard:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+/* Keyboard focus must be as obvious as hover, since the card is the target. */
+.savedCard:focus-within { box-shadow: var(--shadow-md); }
+.stripe { height: 5px; flex: 0 0 5px; }
+.savedBody { padding: 13px 15px 11px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.savedName {
+  font: 700 17px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  color: var(--sdi-black);
+  margin: 0;
+  line-height: var(--lh-snug);
+}
+/* Stretched link: the whole card is clickable without nesting interactives. */
+.savedOpen {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.savedOpen::after { content: ''; position: absolute; inset: 0; }
+.savedMeta { font-size: var(--fs-meta); color: var(--gray-500); font-family: var(--font-mono); }
+.savedCreds { display: flex; flex-wrap: wrap; gap: 4px; }
+.savedFooter {
+  border-top: 1px solid var(--border-subtle);
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-meta);
+  color: var(--gray-500);
+}
+.savedGo { font: 700 var(--fs-micro) var(--font-display); letter-spacing: var(--ls-button); text-transform: uppercase; color: var(--sdi-red); }
+.del {
+  position: absolute;
+  top: 9px;
+  right: 8px;
+  z-index: 1; /* above the stretched link */
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--gray-500);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.del:hover { background: var(--sdi-red); color: var(--gray-0); }
+
+.emptySaved {
+  color: rgba(255, 255, 255, .72);
+  font-size: var(--fs-cell);
+  border: 1px dashed var(--border-on-dark);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+
+/* A fieldset needs its own reset — UA styles add a border, margin and padding
+   that would break the section rhythm. */
+.fieldset {
+  border: 0;
+  margin: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0; /* fieldset defaults to min-content, which breaks the grid */
+}
+.legend {
+  padding: 0;
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}

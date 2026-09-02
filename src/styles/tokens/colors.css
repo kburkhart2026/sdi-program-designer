@@ -1,0 +1,68 @@
+/* ============================================================
+   SDI · COLORS
+   Brand: black, crimson, deep maroon, tan/cream.
+   Sampled directly from the official logo lockups.
+   ============================================================ */
+:root {
+  /* --- Brand core (base palette) — official SDI brand values --- */
+  --sdi-red:        #D50032;  /* PRIMARY crimson — CTAs, accents, active logo bg */
+  --sdi-red-700:    #AB0028;  /* hover / pressed crimson */
+  --sdi-maroon:     #4F0A12;  /* deep maroon — dark sections, vertical lockup bg */
+  --sdi-maroon-900: #380009;  /* deepest maroon */
+  --sdi-black:      #101820;  /* SECONDARY — primary ink (cool near-black) */
+  --sdi-ink:        #1B232B;  /* off-black surfaces */
+
+  /* --- Tan / cream (warm neutrals from the shield) --- */
+  --sdi-bone:       #ECE6DB;  /* lightest cream / paper */
+  --sdi-tan:        #C9B79C;  /* mid tan — shield shadow, warm accent */
+  --sdi-tan-600:    #A18E72;  /* deep tan */
+
+  /* --- Cool neutral ramp (UI grays) --- */
+  --gray-0:   #FFFFFF;
+  --gray-50:  #F6F6F4;
+  --gray-100: #ECECE9;
+  --gray-200: #DEDEDA;
+  --gray-300: #C4C4BF;
+  --gray-400: #9A9A94;
+  --gray-500: #6E6E69;
+  --gray-600: #4D4D49;
+  --gray-700: #353533;
+  --gray-800: #232322;
+  --gray-900: #141413;
+
+  /* --- Semantic status --- */
+  --green:  #2E7D32;
+  --amber:  #C77700;
+  --info:   #1F6FB2;
+  --danger: var(--sdi-red);
+
+  /* ============================================================
+     SEMANTIC ALIASES — reference these in components
+     ============================================================ */
+  /* Text */
+  --text-strong:    var(--sdi-black);
+  --text-body:      var(--gray-800);
+  --text-muted:     var(--gray-500);
+  --text-inverse:   var(--gray-0);
+  --text-on-red:    var(--gray-0);
+  --text-link:      var(--sdi-red);
+
+  /* Surfaces */
+  --surface-page:    var(--gray-50);
+  --surface-card:    var(--gray-0);
+  --surface-sunken:  var(--gray-100);
+  --surface-inverse: var(--sdi-black);
+  --surface-brand:   var(--sdi-red);
+  --surface-deep:    var(--sdi-maroon);
+
+  /* Lines */
+  --border-subtle:  var(--gray-200);
+  --border-default: var(--gray-300);
+  --border-strong:  var(--sdi-black);
+
+  /* Accents */
+  --accent:         var(--sdi-red);
+  --accent-hover:   var(--sdi-red-700);
+  --accent-warm:    var(--sdi-tan);
+  --focus-ring:     color-mix(in srgb, var(--sdi-red) 45%, transparent);
+}

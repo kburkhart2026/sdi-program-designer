@@ -1,0 +1,535 @@
+/* ============================================================
+   Builder — the Program Designer main screen.
+   Three columns: lesson database, course grid, outcomes/coverage.
+   Density is the point. Do not add whitespace to make this feel "cleaner".
+   ============================================================ */
+
+.screen { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ---------- header bar ---------- */
+.appbar {
+  height: var(--h-appbar);
+  flex: 0 0 var(--h-appbar);
+  background: var(--sdi-maroon);
+  color: var(--gray-0);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px;
+}
+.appTitle {
+  font: 700 11px var(--font-display);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.progName { font-size: var(--fs-app); font-weight: 600; margin: 0; line-height: 1.2; white-space: nowrap; }
+.progMeta { font-size: 11.5px; opacity: .65; white-space: nowrap; }
+.appbarRight { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.lessonCount { font-size: 11.5px; opacity: .8; font-family: var(--font-mono); white-space: nowrap; }
+.viewBadge {
+  padding: 5px 10px;
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-sm);
+  font: 700 var(--fs-micro) var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+}
+
+/* The Export control sits inside a position:relative dropdown wrapper, so
+   unlike its siblings it is not blockified by the flex container and would
+   overflow the bar without an explicit inline-flex. Spec calls this out. */
+.exportWrap { position: relative; display: inline-flex; align-items: center; }
+.menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  z-index: 60;
+  min-width: 186px;
+  background: var(--gray-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 4px;
+}
+.menuItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  font-size: var(--fs-cell);
+  color: var(--sdi-black);
+  cursor: pointer;
+}
+.menuItem:hover { background: var(--sdi-bone); }
+.menuNote { padding: 5px 10px 7px; font-size: var(--fs-meta); color: var(--gray-500); }
+
+/* ---------- body ---------- */
+.body { flex: 1; min-height: 0; display: flex; }
+
+/* ---------- left: lesson database ---------- */
+.left {
+  width: var(--w-panel-left);
+  flex: 0 0 var(--w-panel-left);
+  border-right: 1px solid var(--border-subtle);
+  background: var(--gray-0);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.panelHead {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.panelHeadRow { display: flex; align-items: center; gap: 8px; }
+.collapse {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+.collapse:hover { color: var(--sdi-red); background: var(--gray-100); }
+
+.select,
+.search {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: var(--fs-cell);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--gray-0);
+  outline: none;
+}
+.select:focus-visible,
+.search:focus-visible { border-color: var(--sdi-red); }
+
+.filterRow { display: flex; align-items: center; gap: 8px; }
+.filterToggle {
+  padding: 4px 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--gray-0);
+  font-size: var(--fs-meta);
+  color: var(--gray-600);
+  cursor: pointer;
+}
+.filterToggle:hover { border-color: var(--sdi-red); }
+.filterOn { background: var(--sdi-bone); border-color: var(--sdi-tan); color: var(--sdi-maroon); font-weight: 600; }
+.resultCount { margin-left: auto; font-size: var(--fs-meta); color: var(--gray-500); font-family: var(--font-mono); }
+
+.lessonList { flex: 1; min-height: 0; overflow-y: auto; }
+.deptHead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 5px 12px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border-subtle);
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--sdi-maroon);
+}
+.lessonRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 14px;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: 3px solid transparent;
+  background: transparent;
+  font-size: var(--fs-cell);
+  color: var(--sdi-black);
+  cursor: grab;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.lessonRow:hover { background: var(--sdi-bone); }
+.lessonRowSel { background: var(--sdi-bone); border-left-color: var(--sdi-red); }
+/* A placed lesson drops to 55% — still legible, visibly spent. */
+.lessonRowPlaced { opacity: .55; }
+.lessonRowName { flex: 1; min-width: 0; line-height: 1.35; }
+.placedChip {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  background: var(--sdi-bone);
+  color: var(--sdi-maroon);
+  padding: 2px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.emptyList { padding: 18px 14px; font-size: var(--fs-cell); color: var(--text-quiet); }
+
+/* ---------- centre: course grid ---------- */
+.centre { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--gray-100); }
+
+.tabStrip {
+  background: var(--sdi-black);
+  display: flex;
+  overflow-x: auto;
+  flex: 0 0 auto;
+}
+.tab {
+  flex: 0 0 auto;
+  padding: 7px 15px 6px;
+  border: none;
+  border-top: 3px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, .68);
+  font: 700 var(--fs-meta) var(--font-display);
+  letter-spacing: var(--ls-button);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.tab:hover { color: var(--gray-0); background: rgba(255, 255, 255, .08); }
+.tabOn { color: var(--gray-0); }
+
+.masthead { padding: 14px 18px; display: flex; align-items: center; gap: 15px; color: var(--gray-0); }
+.mastheadBadge {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 62px;
+  border: var(--bw-1) solid rgba(255, 255, 255, .35);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.mastheadBadgeLabel { font: 700 8px var(--font-display); letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+.mastheadBadgeNum { font: 700 28px var(--font-display); line-height: 1; }
+.mastheadMain { flex: 1; min-width: 0; }
+.courseTitle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--gray-0);
+  font: 700 21px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  padding: 0;
+}
+.courseTitle::placeholder { color: rgba(255, 255, 255, .45); }
+.courseTitle:focus-visible { outline: 2px solid var(--gray-0); outline-offset: 3px; }
+.mastheadMeta { font-size: 11.5px; opacity: .78; margin-top: 3px; }
+.reusedTag {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 255, 255, .45);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-meta);
+}
+.mastheadStat { text-align: right; flex: 0 0 auto; }
+
+.colHeads {
+  display: flex;
+  padding: 6px 18px 5px;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--gray-100);
+}
+.colHead {
+  font: 700 var(--fs-colhead) var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.colLesson { flex: 0 1 var(--w-lesson-col); min-width: var(--min-lesson-col); padding-left: 12px; }
+.colText { flex: 1 1 0; min-width: var(--min-text-col); padding-left: 11px; }
+
+.weekScroll { flex: 1; min-height: 0; overflow: auto; padding: 10px 18px 26px; }
+.weekStack { display: flex; flex-direction: column; gap: 10px; min-width: var(--min-grid); }
+
+/* ---------- week card ---------- */
+.week {
+  background: var(--gray-0);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.weekActive { border-color: var(--sdi-tan); }
+.weekDragOver { background: var(--tint-drag); }
+.weekDragOver .weekBody { outline: var(--bw-1) dashed var(--sdi-red); outline-offset: -2px; }
+.weekDragSource { opacity: .45; }
+/* 3px red line above the target when reordering weeks. */
+.weekDropBefore::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -6px;
+  height: 3px;
+  background: var(--sdi-red);
+  border-radius: 2px;
+}
+
+.weekHead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--gray-50);
+  border-radius: 4px 4px 0 0;
+}
+.weekHeadActive { background: var(--sdi-bone); }
+.grip {
+  border: none;
+  background: transparent;
+  color: var(--gray-400);
+  cursor: grab;
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px 3px;
+  border-radius: 2px;
+}
+.grip:hover { color: var(--sdi-black); background: var(--gray-200); }
+.weekNum {
+  font: 700 10.5px var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--text-quiet);
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.weekNumActive { color: var(--sdi-black); }
+.moduleInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: 700 var(--fs-meta) var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--sdi-maroon);
+  padding: 2px 3px;
+  border-radius: 2px;
+}
+.moduleInput::placeholder { color: var(--text-quiet); font-weight: 400; letter-spacing: 0; }
+.moduleInput:hover:not(:read-only) { background: var(--gray-0); }
+.weekCount { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-quiet); white-space: nowrap; }
+
+.weekBody { display: flex; align-items: stretch; }
+.lessonCell {
+  flex: 0 1 var(--w-lesson-col);
+  min-width: var(--min-lesson-col);
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.textCell {
+  flex: 1 1 0;
+  min-width: var(--min-text-col);
+  padding: 9px 11px;
+  border-left: 1px solid var(--border-subtle);
+}
+.cellArea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: var(--fs-row);
+  line-height: 1.45;
+  color: var(--sdi-black);
+  padding: 0;
+}
+.cellArea::placeholder { color: var(--text-quiet); }
+
+.dropEmpty {
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  font-size: var(--fs-row);
+  color: var(--text-quiet);
+}
+.dropEmptyActive { border-color: var(--sdi-red); color: var(--sdi-red); font-weight: 600; }
+
+.lessonChip {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 4px 6px;
+  border-radius: 2px;
+  background: var(--sdi-bone);
+  font-size: var(--fs-row);
+  line-height: 1.35;
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  width: 100%;
+}
+.lessonChipSel { background: var(--sdi-tan); }
+.chipName { flex: 1; min-width: 0; }
+.chipFlag {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--amber-text);
+  white-space: nowrap;
+  padding-top: 1px;
+}
+.chipX {
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+.chipX:hover { background: var(--sdi-red); color: var(--gray-0); }
+
+/* ---------- right: outcomes & coverage ---------- */
+.right {
+  width: var(--w-panel-right);
+  flex: 0 0 var(--w-panel-right);
+  border-left: 1px solid var(--border-subtle);
+  background: var(--gray-0);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+.sideSection { padding: 13px 15px; border-bottom: 1px solid var(--border-subtle); }
+.sideHeadBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  padding: 0 0 9px;
+  cursor: pointer;
+}
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fieldHead { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+/* Scope in this panel is the thing most likely to be misread, so it is carried
+   by colour and a solid chip, not by small grey text. */
+.scopeChip {
+  font: 700 8.5px var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  color: var(--gray-0);
+}
+.scopeChipProgram { color: var(--gray-600); border: 1px solid var(--border-default); background: transparent; }
+.courseScoped { border-left: var(--bw-2) solid; padding-left: 9px; }
+.area {
+  width: 100%;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 7px 8px;
+  font-family: var(--font-body);
+  font-size: var(--fs-row);
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+.area:focus-visible { border-color: var(--sdi-red); }
+
+.detailName {
+  font: 700 16px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  margin: 0 0 3px;
+}
+.detailMeta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); margin-bottom: 10px; }
+.overlap {
+  background: var(--tint-warn);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: var(--fs-row);
+  color: var(--amber-text);
+  line-height: 1.45;
+  margin-bottom: 11px;
+}
+.overlapStrong { border-color: var(--sdi-red); color: var(--sdi-red); }
+
+.bar { margin-bottom: 9px; }
+.barTop { display: flex; align-items: baseline; gap: 8px; font-size: var(--fs-row); margin-bottom: 3px; }
+.barCode { font-weight: 600; }
+.barRatio { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); }
+.barTrack { height: 6px; background: var(--gray-200); border-radius: 999px; overflow: hidden; }
+.barFill { height: 100%; background: var(--sdi-red); border-radius: 999px; transition: width var(--dur) var(--ease-out); }
+.barFillDone { background: var(--green); }
+.barNote { font-size: var(--fs-meta); color: var(--text-quiet); margin-top: 2px; }
+
+.dupRow {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  background: var(--tint-warn);
+  font-size: var(--fs-row);
+  color: var(--sdi-black);
+  cursor: pointer;
+}
+.dupRow:hover { border-color: var(--amber-text); }
+.dupWhere { margin-left: auto; font-family: var(--font-mono); font-size: 9.5px; color: var(--amber-text); white-space: nowrap; }
+
+.quiet { font-size: var(--fs-row); color: var(--text-quiet); }
+
+/* ---------- keyboard-only placement ----------------------------------------
+   docs/decisions.md removed the visual "place in week" grid as redundant with
+   drag-and-drop, and that decision stands for pointer users. Native HTML5 drag
+   has no keyboard equivalent, though, so this control exists and is reachable
+   by Tab while staying invisible to the mouse. */
+.kbdOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.kbdOnly:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px dashed var(--sdi-red);
+  border-radius: var(--radius-sm);
+}

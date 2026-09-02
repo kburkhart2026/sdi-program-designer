@@ -1,0 +1,63 @@
+.boot {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: var(--sdi-maroon);
+  padding: 24px;
+}
+.bootCard {
+  background: var(--gray-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 26px 28px;
+  max-width: 420px;
+  text-align: center;
+}
+.bootTitle {
+  font: 700 18px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+.bootText { font-size: var(--fs-cell); color: var(--gray-600); line-height: var(--lh-normal); margin: 0 0 14px; }
+
+/* Displaces the page rather than overlaying it, so the header stays reachable
+   while the user rescues their work. */
+.alarm {
+  position: relative;
+  z-index: 14000;
+  background: #A5001F;
+  color: var(--gray-0);
+  padding: 9px 16px;
+  font-size: var(--fs-cell);
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 7000;
+  max-width: 380px;
+  padding: 9px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--sdi-black);
+  color: var(--gray-0);
+  font-size: var(--fs-cell);
+  box-shadow: var(--shadow-md);
+}
+.toastOk { background: var(--green); }
+.toastError { background: var(--sdi-red); }
+
+.localNote {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 6000;
+  padding: 6px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--sdi-bone);
+  color: var(--sdi-maroon);
+  font-size: var(--fs-meta);
+  border: 1px solid var(--sdi-tan);
+}

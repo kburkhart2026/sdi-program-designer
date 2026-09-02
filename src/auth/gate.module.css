@@ -1,0 +1,90 @@
+/* Full-screen unlock gate. Nothing is fetched from GitHub until it resolves,
+   so no content can flash behind it. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--sdi-maroon);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--gray-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 30px 28px 26px;
+  text-align: center;
+}
+
+.shield { height: 46px; width: auto; display: block; margin: 0 auto 16px; }
+
+.eyebrow {
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.title {
+  font: 700 21px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  color: var(--sdi-black);
+  margin: 4px 0 4px;
+}
+
+.blurb {
+  font-size: var(--fs-cell);
+  color: var(--gray-600);
+  line-height: var(--lh-normal);
+  margin-bottom: 18px;
+  text-wrap: pretty;
+}
+
+.field { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+
+.label {
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.input {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 15px;
+  border: var(--bw-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--gray-0);
+}
+.input:focus-visible { border-color: var(--sdi-red); }
+
+.submit {
+  margin-top: 14px;
+  width: 100%;
+  padding: 11px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--sdi-red);
+  color: var(--gray-0);
+  font: 700 var(--fs-ui) var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.submit:hover:not(:disabled) { background: var(--sdi-red-700); }
+.submit:disabled { opacity: .55; cursor: default; }
+
+/* Errors are announced, not just coloured. */
+.message { margin-top: 12px; font-size: var(--fs-cell); min-height: 18px; }
+.error { color: var(--sdi-red); }
+.ok { color: var(--green); }
+.unavailable { color: var(--amber-text); }

@@ -1,0 +1,55 @@
+/* ============================================================
+   SDI · WEBFONTS  (Adobe Typekit kit: qbk2qzz)
+   Real brand faces:
+     - proxima-nova            → body / UI            (weights 400, 700 + italics)
+     - proxima-nova-condensed  → headings / display   (weights 400, 700)
+     - prohibition             → collegiate display   (the SDI wordmark look, 400)
+   Also in the kit (available if needed): proxima-nova-extra-condensed.
+
+   The kit @import keeps fonts current via Adobe; the explicit @font-face rules
+   below let this design system detect/ship the faces and guarantee rendering.
+   Google fallbacks (Mulish / Saira Condensed) load last for offline previews.
+   ============================================================ */
+@import url("https://use.typekit.net/qbk2qzz.css");
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Saira+Condensed:wght@500;600;700;800;900&display=swap');
+
+/* --- Proxima Nova (body) --- */
+@font-face {
+  font-family: "proxima-nova";
+  src: url("https://use.typekit.net/af/705e94/00000000000000003b9b3062/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"), url("https://use.typekit.net/af/705e94/00000000000000003b9b3062/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff");
+  font-display: swap; font-style: normal; font-weight: 400;
+}
+@font-face {
+  font-family: "proxima-nova";
+  src: url("https://use.typekit.net/af/5c70f2/00000000000000003b9b3063/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3") format("woff2"), url("https://use.typekit.net/af/5c70f2/00000000000000003b9b3063/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3") format("woff");
+  font-display: swap; font-style: italic; font-weight: 400;
+}
+@font-face {
+  font-family: "proxima-nova";
+  src: url("https://use.typekit.net/af/949f99/00000000000000003b9b3068/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/949f99/00000000000000003b9b3068/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff");
+  font-display: swap; font-style: normal; font-weight: 700;
+}
+@font-face {
+  font-family: "proxima-nova";
+  src: url("https://use.typekit.net/af/4c4052/00000000000000003b9b3069/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i7&v=3") format("woff2"), url("https://use.typekit.net/af/4c4052/00000000000000003b9b3069/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i7&v=3") format("woff");
+  font-display: swap; font-style: italic; font-weight: 700;
+}
+
+/* --- Proxima Nova Condensed (headings / display) --- */
+@font-face {
+  font-family: "proxima-nova-condensed";
+  src: url("https://use.typekit.net/af/8e2bbd/00000000000000003b9b3072/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"), url("https://use.typekit.net/af/8e2bbd/00000000000000003b9b3072/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff");
+  font-display: swap; font-style: normal; font-weight: 400;
+}
+@font-face {
+  font-family: "proxima-nova-condensed";
+  src: url("https://use.typekit.net/af/0ff5e1/00000000000000003b9b3078/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/0ff5e1/00000000000000003b9b3078/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff");
+  font-display: swap; font-style: normal; font-weight: 700;
+}
+
+/* --- Prohibition (collegiate display — the SDI wordmark look) --- */
+@font-face {
+  font-family: "prohibition";
+  src: url("https://use.typekit.net/af/cf8ade/000000000000000000017201/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"), url("https://use.typekit.net/af/cf8ade/000000000000000000017201/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff");
+  font-display: swap; font-style: normal; font-weight: 400;
+}

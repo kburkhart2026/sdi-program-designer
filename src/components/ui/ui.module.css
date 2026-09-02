@@ -1,0 +1,185 @@
+/* ============================================================
+   Core primitives — rebuilt from the SDI design system.
+
+   The handoff shipped a prebuilt _ds_bundle.js keyed to a prototype global,
+   and the components/core/*.jsx sources it was built from were not included,
+   so these are recreated against the token CSS. GITHUB-SETUP.md §6 asks for
+   exactly that ("port the components into the repo's own component library
+   rather than shipping the prototype bundle").
+   ============================================================ */
+
+/* ---------- Button ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font: 700 var(--fs-micro) var(--font-display);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.btn:disabled { opacity: .5; cursor: default; }
+/* Press nudges down 1px — the "plate" feel. */
+.btn:not(:disabled):active { transform: translateY(1px); }
+
+.primary { background: var(--sdi-red); color: var(--gray-0); }
+.primary:not(:disabled):hover { background: var(--sdi-red-700); color: var(--gray-0); }
+
+/* Outline buttons FILL on hover, per the brand's hover rules. */
+.outline {
+  background: transparent;
+  color: var(--sdi-black);
+  border-color: var(--border-default);
+}
+.outline:not(:disabled):hover {
+  background: var(--sdi-black);
+  border-color: var(--sdi-black);
+  color: var(--gray-0);
+}
+
+/* On maroon/black bands. Border is .45 white, not the spec's .35 — that
+   measured 2.88:1 and WCAG 1.4.11 needs 3:1 for a control boundary. */
+.onDark {
+  background: transparent;
+  color: var(--gray-0);
+  border-color: var(--border-on-dark);
+}
+.onDark:not(:disabled):hover {
+  background: var(--surface-on-dark-hover);
+  border-color: var(--border-on-dark-hover);
+  color: var(--gray-0);
+}
+
+.ghost { background: transparent; color: var(--gray-600); }
+.ghost:not(:disabled):hover { background: var(--gray-100); color: var(--sdi-black); }
+
+.danger { background: transparent; color: var(--sdi-red); border-color: var(--border-default); }
+.danger:not(:disabled):hover { background: var(--sdi-red); border-color: var(--sdi-red); color: var(--gray-0); }
+
+.lg { padding: 10px 18px; font-size: var(--fs-ui); }
+.block { width: 100%; justify-content: center; }
+
+/* ---------- Eyebrow / section heading ---------- */
+.eyebrow {
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.eyebrowLight { color: var(--sdi-tan); letter-spacing: var(--ls-eyebrow); }
+
+/* ---------- Chip ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--gray-0);
+  font-size: var(--fs-meta);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.chip:hover { border-color: var(--sdi-red); }
+.chipOn {
+  background: var(--sdi-red);
+  border-color: var(--sdi-red);
+  color: var(--gray-0);
+  font-weight: 600;
+}
+.chipStatic { cursor: default; }
+.chipStatic:hover { border-color: var(--border-subtle); }
+.chipBone { background: var(--sdi-bone); border-color: transparent; color: var(--sdi-maroon); }
+
+/* ---------- Stepper ---------- */
+.stepper { display: flex; flex-direction: column; gap: 5px; }
+.stepperRow {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--gray-0);
+}
+.stepBtn {
+  width: 38px;
+  flex: 0 0 38px;
+  border: none;
+  background: var(--gray-50);
+  color: var(--sdi-black);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.stepBtn:hover:not(:disabled) { background: var(--gray-200); }
+.stepBtn:disabled { color: var(--gray-400); cursor: default; }
+.stepValue {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  align-self: center;
+  padding: 7px 4px;
+  font: 700 20px var(--font-display);
+  color: var(--sdi-black);
+}
+.stepHint { font-size: var(--fs-meta); color: var(--gray-500); }
+
+/* ---------- Stat ---------- */
+.stat { display: flex; flex-direction: column; gap: 1px; }
+.statLabel {
+  font: 700 8px var(--font-display);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.statValue { font: 700 19px var(--font-display); line-height: var(--lh-snug); }
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--gray-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Collapsed rail ---------- */
+.rail {
+  width: var(--w-rail);
+  flex: 0 0 var(--w-rail);
+  border: none;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--gray-50);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.rail:hover { background: var(--gray-100); }
+.railRight { border-right: none; border-left: 1px solid var(--border-subtle); }
+.railLabel {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--gray-600);
+  white-space: nowrap;
+}

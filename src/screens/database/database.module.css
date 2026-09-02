@@ -1,0 +1,305 @@
+/* ============================================================
+   Catalog Database — the Tooling U–SME browser.
+
+   Read-mostly, and deliberately a separate tool from Program Designer: an early
+   single-tool version buried browsing inside authoring, so users could not
+   look something up without risking a change.
+   ============================================================ */
+
+.screen { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ---------- header (52px here, vs Program Designer's 50px) ---------- */
+.appbar {
+  height: 52px;
+  flex: 0 0 52px;
+  background: var(--sdi-maroon);
+  color: var(--gray-0);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+}
+.appTitle {
+  font: 700 var(--fs-cell) var(--font-display);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.totals {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+  font-size: var(--fs-cell);
+  opacity: .85;
+  white-space: nowrap;
+}
+
+.body { flex: 1; min-height: 0; display: flex; }
+
+/* ---------- left: credential list (250px) ----------
+   Flat and alphabetical. SME certifications and Mechatronics microcredentials
+   are interleaved, not sectioned — the distinction does not help you find one. */
+.left {
+  width: 250px;
+  flex: 0 0 250px;
+  background: var(--gray-0);
+  border-right: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.leftHead { padding: 14px 16px 8px; }
+.credList { list-style: none; margin: 0 0 10px; padding: 0; }
+.credRow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  border: none;
+  border-left: var(--bw-2) solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.credRow:hover { background: var(--sdi-bone); }
+.credRowOn { background: var(--sdi-bone); border-left-color: var(--sdi-red); }
+.credRowTop { display: flex; align-items: baseline; gap: 8px; }
+.credCode { font-weight: 600; font-size: 12.5px; color: var(--sdi-black); }
+.credCount { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); }
+.credTitle { font-size: var(--fs-meta); color: var(--gray-600); line-height: 1.35; margin-top: 2px; }
+
+/* ---------- centre ---------- */
+.centre { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--gray-100); }
+
+.centreHead {
+  padding: 16px 20px 12px;
+  background: var(--gray-0);
+  border-bottom: 1px solid var(--border-default);
+}
+.headRow { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.headMain { min-width: 380px; flex: 1; }
+.headEyebrow {
+  font: 700 var(--fs-eyebrow) var(--font-display);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--sdi-red);
+}
+.headTitle {
+  font: 700 22px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  margin: 3px 0 0;
+  line-height: var(--lh-snug);
+}
+.headSummary {
+  font-size: var(--fs-cell);
+  color: var(--gray-600);
+  margin: 5px 0 0;
+  max-width: 640px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.search {
+  width: 210px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  border: var(--bw-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--gray-0);
+}
+.search:focus-visible { border-color: var(--sdi-red); }
+
+.tabRow { display: flex; gap: 6px; margin-top: 12px; align-items: center; }
+.tab {
+  padding: 6px 12px;
+  font: 700 var(--fs-micro) var(--font-display);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  background: var(--gray-0);
+  color: var(--gray-600);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.tab:hover:not(:disabled) { border-color: var(--sdi-black); }
+.tab:disabled { opacity: .45; cursor: default; }
+.tabOn { border-color: var(--sdi-black); background: var(--sdi-black); color: var(--gray-0); }
+.resultLabel {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--gray-500);
+  font-family: var(--font-mono);
+}
+
+.scroll { flex: 1; min-height: 0; overflow: auto; padding: 12px 20px 24px; }
+
+.deptBlock { margin-bottom: 14px; }
+.deptHead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 2px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.deptName {
+  font: 700 var(--fs-micro) var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--sdi-maroon);
+  margin: 0;
+}
+.deptCount { font-family: var(--font-mono); font-size: 10.5px; color: var(--gray-500); }
+
+.lessonRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 8px;
+  cursor: pointer;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: var(--bw-2) solid transparent;
+  background: var(--gray-0);
+  font-size: 12.5px;
+  color: var(--sdi-black);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.lessonRow:hover { background: var(--sdi-bone); }
+.lessonRowOn { background: var(--sdi-bone); border-left-color: var(--sdi-red); }
+.lessonName { flex: 1; min-width: 0; }
+.chip {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+.chipShared { background: var(--sdi-bone); color: var(--sdi-maroon); }
+/* Spec had --gray-400 here (2.83:1). --text-quiet is --gray-500 at 5.13:1. */
+.chipOnly { color: var(--text-quiet); }
+
+/* ---------- workbook notes ----------
+   Lean Silver, Lean Gold and CMTSE have no lesson mapping in the source
+   workbook — only reading lists and a chapter outline. Rendering their actual
+   workbook content beats an empty list that looks like a loading failure. */
+.notes { max-width: 760px; display: flex; flex-direction: column; gap: 10px; }
+.notesHead {
+  font: 700 var(--fs-micro) var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--sdi-maroon);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin: 0;
+}
+.note {
+  background: var(--gray-0);
+  border: 1px solid var(--border-default);
+  border-left: var(--bw-2) solid var(--sdi-red);
+  border-radius: var(--radius-sm);
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.noteLabel { font-size: 12.5px; font-weight: 600; }
+.noteText {
+  font-size: 11.5px;
+  color: var(--gray-600);
+  line-height: 1.55;
+  white-space: pre-line;
+  margin: 0;
+}
+.noteUrl { font-size: var(--fs-meta); font-family: var(--font-mono); word-break: break-all; }
+
+.empty { padding: 40px 0; text-align: center; color: var(--gray-500); font-size: 12.5px; }
+
+/* ---------- right: body of knowledge + lesson detail (310px) ---------- */
+.right {
+  width: 310px;
+  flex: 0 0 310px;
+  background: var(--gray-0);
+  border-left: 1px solid var(--border-default);
+  overflow-y: auto;
+}
+.bok {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--gray-50);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bokDoc {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  background: var(--gray-0);
+  border: 1px solid var(--border-default);
+  border-left: var(--bw-2) solid var(--sdi-red);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--sdi-black);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.bokDoc:hover { background: var(--sdi-bone); color: var(--sdi-black); }
+.bokText { flex: 1; min-width: 0; }
+.bokTitle { display: block; font-size: var(--fs-cell); font-weight: 600; line-height: 1.3; }
+.bokMeta { display: block; font-size: 10.5px; color: var(--gray-500); margin-top: 1px; }
+.bokTag {
+  flex-shrink: 0;
+  font: 700 9px var(--font-display);
+  letter-spacing: .1em;
+  color: var(--sdi-red);
+}
+.bokNone { font-size: 11.5px; color: var(--gray-500); line-height: 1.5; margin: 0; }
+
+.detailSection { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); }
+.detailSectionLast { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.detailName {
+  font: 700 16px var(--font-display);
+  text-transform: uppercase;
+  margin: 4px 0 0;
+  line-height: 1.2;
+}
+.detailMeta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); margin: 5px 0 0; }
+.credJump {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: var(--sdi-bone);
+  border: none;
+  border-left: var(--bw-2) solid var(--sdi-red);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--sdi-black);
+}
+.credJump:hover { background: var(--sdi-tan); }
+.credJumpCode { font-weight: 600; font-size: var(--fs-cell); }
+.credJumpTitle { font-size: var(--fs-meta); color: var(--gray-600); line-height: 1.3; }
+.linkNote { font-size: 11.5px; color: var(--gray-600); line-height: 1.5; margin: 0; }
+.openBtn {
+  display: block;
+  text-align: center;
+  padding: 11px 14px;
+  background: var(--sdi-red);
+  color: var(--gray-0);
+  font: 700 11px var(--font-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.openBtn:hover { background: var(--sdi-red-700); color: var(--gray-0); }
+.noDetail { padding: 22px 18px; color: var(--gray-500); font-size: var(--fs-cell); line-height: 1.6; margin: 0; }
+
+.stack { display: flex; flex-direction: column; gap: 8px; }

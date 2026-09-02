@@ -1,0 +1,78 @@
+/* ============================================================
+   Program map — a one-page visual of a finished program, for meetings.
+   The builder grid does not read at a glance; this does.
+   ============================================================ */
+
+.screen { height: 100%; overflow: auto; background: var(--gray-100); }
+.column { max-width: var(--max-map); margin: 0 auto; padding: 18px 24px 48px; }
+
+.controls { display: flex; gap: 8px; margin-bottom: 14px; }
+
+.card {
+  background: var(--gray-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.band { padding: 24px 28px; color: var(--gray-0); }
+.progTitle {
+  font: 700 30px var(--font-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  line-height: var(--lh-snug);
+  margin: 3px 0 14px;
+}
+.statRow { display: flex; gap: 34px; flex-wrap: wrap; }
+
+.section { padding: 20px 28px; border-top: 1px solid var(--border-subtle); }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  gap: 9px;
+  list-style: none;
+  margin: 11px 0 0;
+  padding: 0;
+}
+.tile { border: 1px solid var(--border-subtle); border-radius: 4px; overflow: hidden; }
+.tileBar {
+  padding: 6px 10px;
+  color: var(--gray-0);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.tileBarLabel { font: 700 8px var(--font-display); letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+.tileBarNum { font: 700 15px var(--font-display); line-height: 1; }
+.tileBody { padding: 9px 10px 10px; }
+.tileTitle { font-size: var(--fs-cell); font-weight: 600; line-height: 1.35; }
+.tileMeta { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); margin-top: 4px; }
+.tileReused {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 6px;
+  background: var(--sdi-bone);
+  border-radius: 2px;
+  font-size: 9.5px;
+  color: var(--sdi-maroon);
+}
+
+.bar { margin-top: 9px; }
+.barTop { display: flex; align-items: baseline; gap: 8px; font-size: var(--fs-cell); margin-bottom: 3px; }
+.barCode { font-weight: 600; }
+.barRatio { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--gray-500); }
+.barTrack { height: 7px; background: var(--gray-200); border-radius: 999px; overflow: hidden; }
+.barFill { height: 100%; background: var(--sdi-red); border-radius: 999px; }
+.barFillDone { background: var(--green); }
+.barFillDept { background: var(--sdi-maroon); }
+
+.quiet { font-size: var(--fs-cell); color: var(--text-quiet); margin-top: 9px; }
+
+/* Print colours must survive — the bands and bars carry the meaning. */
+@media print {
+  .screen { background: #fff; overflow: visible; height: auto; }
+  .column { padding: 0; max-width: none; }
+  .card { box-shadow: none; border-radius: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
