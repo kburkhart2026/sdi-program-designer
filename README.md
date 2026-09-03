@@ -80,8 +80,10 @@ and will otherwise overwrite a colleague's work silently.
 ### 1. Create the two repos
 
 - `sdi-program-designer` — push this folder to it.
-- `sdi-program-designer-content` — **private**, leave it empty. The app creates the
-  files on the first publish.
+- `sdi-program-designer-content` — **private**. Leave it empty; the app creates
+  `manifest.json` and `programs/` itself on the first publish. A repo initialised
+  with a README or licence is fine too — the sync layer handles both an empty
+  repo (no branch yet) and one that already has commits.
 
 ### 2. Turn on Pages
 

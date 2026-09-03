@@ -222,29 +222,44 @@ export async function commitFile(
           headers: headers(token),
           cache: 'no-store',
         })
-        if (!refRes.ok) {
+
+        // A brand-new repo created with NO README, .gitignore or licence has no
+        // commits, so no refs at all, and this 404s. That is the state the
+        // setup instructions actually ask for, so it must be a supported path:
+        // write a parentless root commit and CREATE the branch instead of
+        // moving it. Without this the very first publish dies here, reporting
+        // a 404 that reads like a permissions problem.
+        const isFirstCommit = refRes.status === 404
+
+        if (!refRes.ok && !isFirstCommit) {
           lastError = { kind: 'http', status: refRes.status, path }
           return { ok: false }
         }
-        const parentCommitSha = ((await refRes.json()) as { object: { sha: string } }).object.sha
 
-        // 3. Base tree.
-        const commitRes = await fetch(repoUrl(`/git/commits/${parentCommitSha}`), {
-          headers: headers(token),
-          cache: 'no-store',
-        })
-        if (!commitRes.ok) {
-          lastError = { kind: 'http', status: commitRes.status, path }
-          return { ok: false }
+        let parentCommitSha: string | null = null
+        let baseTreeSha: string | undefined
+
+        if (!isFirstCommit) {
+          parentCommitSha = ((await refRes.json()) as { object: { sha: string } }).object.sha
+
+          // 3. Base tree.
+          const commitRes = await fetch(repoUrl(`/git/commits/${parentCommitSha}`), {
+            headers: headers(token),
+            cache: 'no-store',
+          })
+          if (!commitRes.ok) {
+            lastError = { kind: 'http', status: commitRes.status, path }
+            return { ok: false }
+          }
+          baseTreeSha = ((await commitRes.json()) as { tree: { sha: string } }).tree.sha
         }
-        const baseTreeSha = ((await commitRes.json()) as { tree: { sha: string } }).tree.sha
 
-        // 4. Tree.
+        // 4. Tree. No base_tree on a root commit — there is nothing to build on.
         const treeRes = await fetch(repoUrl('/git/trees'), {
           method: 'POST',
           headers: headers(token),
           body: JSON.stringify({
-            base_tree: baseTreeSha,
+            ...(baseTreeSha ? { base_tree: baseTreeSha } : {}),
             tree: [{ path, mode: '100644', type: 'blob', sha: newBlobSha }],
           }),
         })
@@ -261,7 +276,8 @@ export async function commitFile(
           body: JSON.stringify({
             message,
             tree: newTreeSha,
-            parents: [parentCommitSha],
+            // A root commit has no parents; the API rejects [null].
+            parents: parentCommitSha ? [parentCommitSha] : [],
           }),
         })
         if (!newCommitRes.ok) {
@@ -270,12 +286,23 @@ export async function commitFile(
         }
         const newCommitSha = ((await newCommitRes.json()) as { sha: string }).sha
 
-        // 6. Move the branch. force:false -> 422/409 if someone else moved it.
-        const patchRes = await fetch(repoUrl(`/git/refs/heads/${GITHUB_BRANCH}`), {
-          method: 'PATCH',
-          headers: headers(token),
-          body: JSON.stringify({ sha: newCommitSha, force: false }),
-        })
+        // 6. Point the branch at it.
+        //    Existing branch -> PATCH with force:false, so a 422/409 tells us
+        //    someone else moved it while we were building this commit.
+        //    First commit  -> POST to create refs/heads/<branch>. This also
+        //    fails with 422 if another editor created it a moment earlier,
+        //    which the retry below then handles as an ordinary race.
+        const patchRes = isFirstCommit
+          ? await fetch(repoUrl('/git/refs'), {
+              method: 'POST',
+              headers: headers(token),
+              body: JSON.stringify({ ref: `refs/heads/${GITHUB_BRANCH}`, sha: newCommitSha }),
+            })
+          : await fetch(repoUrl(`/git/refs/heads/${GITHUB_BRANCH}`), {
+              method: 'PATCH',
+              headers: headers(token),
+              body: JSON.stringify({ sha: newCommitSha, force: false }),
+            })
         if (patchRes.ok) {
           lastError = null
           return { ok: true, sha: newBlobSha }
