@@ -8,8 +8,8 @@
  * Fill these in once, then commit. They are not secrets — the private content
  * repo is unreadable without a token regardless of who knows its name.
  */
-export const GITHUB_OWNER = ''          // <-- your GitHub username or org
-export const GITHUB_CONTENT_REPO = ''   // <-- e.g. 'sdi-program-designer-content'
+export const GITHUB_OWNER = 'kburkhart2026'
+export const GITHUB_CONTENT_REPO = 'sdi-program-designer-content'
 export const GITHUB_BRANCH = 'main'
 
 export const GITHUB_API = 'https://api.github.com'
