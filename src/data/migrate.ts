@@ -41,9 +41,16 @@ function migrateWeek(raw: unknown, collectPlo: (plo: string) => void): Week {
   const discussion = 'discussion' in w ? str(w.discussion) : str(w.assessment)
   const assessment = 'discussion' in w ? str(w.assessment) : str(w.applied)
 
+  const lessons = arr(w.lessons).filter((id): id is string => typeof id === 'string')
+
   return {
     module: str(w.module),
-    lessons: arr(w.lessons).filter((id): id is string => typeof id === 'string'),
+    lessons,
+    // Absent before this field existed. Intersected with `lessons` so a flag
+    // can never outlive the placement it describes.
+    reviewLessons: arr(w.reviewLessons)
+      .filter((id): id is string => typeof id === 'string')
+      .filter((id) => lessons.includes(id)),
     // (2) drop the old prefilled defaults.
     discussion: STALE_DEFAULTS.has(discussion.trim()) ? '' : discussion,
     assessment,

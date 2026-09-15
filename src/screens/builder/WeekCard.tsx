@@ -35,6 +35,7 @@ export function WeekCard({
   const setWeekField = useProgram((st) => st.setWeekField)
   const addLesson = useProgram((st) => st.addLesson)
   const removeLesson = useProgram((st) => st.removeLesson)
+  const toggleReviewLesson = useProgram((st) => st.toggleReviewLesson)
   const moveWeek = useProgram((st) => st.moveWeek)
 
   const over = useUi((u) => u.over)
@@ -186,6 +187,7 @@ export function WeekCard({
               const elsewhere = (placements.get(id) ?? []).filter(
                 (p) => !(p.courseIndex === courseIndex && p.weekIndex === weekIndex),
               )
+              const isReview = (week.reviewLessons ?? []).includes(id)
               return (
                 <div
                   key={id}
@@ -203,6 +205,15 @@ export function WeekCard({
                       removeLesson(courseIndex, weekIndex, id)
                       announce(`${lesson?.name ?? 'Lesson'} removed from week ${weekIndex + 1}.`)
                     }
+                    // R toggles review without leaving the chip, matching the
+                    // Delete shortcut already on this element.
+                    if (canEdit && (e.key === 'r' || e.key === 'R')) {
+                      e.preventDefault()
+                      toggleReviewLesson(courseIndex, weekIndex, id)
+                      announce(
+                        `${lesson?.name ?? 'Lesson'} ${isReview ? 'no longer marked' : 'marked'} as a review lesson.`,
+                      )
+                    }
                   }}
                 >
                   <span className={s.chipName}>{lesson?.name ?? `Unknown lesson ${id}`}</span>
@@ -210,6 +221,27 @@ export function WeekCard({
                     <span className={s.chipFlag} title="This lesson is placed elsewhere too">
                       {formatElsewhere(elsewhere[0])}
                     </span>
+                  )}
+                  {/* Viewers see the tag on marked lessons but get no control:
+                      a static span, not a button. */}
+                  {canEdit ? (
+                    <button
+                      className={`${s.chipReview} ${isReview ? s.chipReviewOn : ''}`}
+                      aria-pressed={isReview}
+                      title={isReview ? 'Marked as a review lesson' : 'Mark as a review lesson'}
+                      aria-label={`Review lesson: ${lesson?.name ?? 'lesson'}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleReviewLesson(courseIndex, weekIndex, id)
+                        announce(
+                          `${lesson?.name ?? 'Lesson'} ${isReview ? 'no longer marked' : 'marked'} as a review lesson.`,
+                        )
+                      }}
+                    >
+                      Review
+                    </button>
+                  ) : (
+                    isReview && <span className={`${s.chipReview} ${s.chipReviewOn}`}>Review</span>
                   )}
                   {canEdit && (
                     <button

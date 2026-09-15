@@ -46,8 +46,13 @@ export function buildDocumentHtml(
     .map((course, ci) => {
       const rows = course.weeks
         .map((week, wi) => {
+          const review = new Set(week.reviewLessons ?? [])
           const lessons = week.lessons
-            .map((id) => escapeHtml(index.byId.get(id)?.name ?? id))
+            .map((id) => {
+              const name = escapeHtml(index.byId.get(id)?.name ?? id)
+              // Carried into Word and PDF too, not just the spreadsheet.
+              return review.has(id) ? `${name} <i>(review)</i>` : name
+            })
             .join('<br>')
           return `
       <tr>

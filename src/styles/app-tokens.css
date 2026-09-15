@@ -45,6 +45,18 @@
      Keep --amber itself for fills, bars and rules, where 1.4.11's 3:1 applies. */
   --amber-text: #8A5200;
 
+  /* --- Review-lesson marker -------------------------------------------
+     A placement taught as review rather than new instruction.
+
+     Warm brown, in the tan/bronze family but NOT --sdi-tan-600 (#A18E72),
+     which measures only 3.17:1 against white and 2.55:1 on --sdi-bone — it
+     fails AA in both the filled and outlined states the tag uses.
+     This value gives 6.49:1 white-on-fill and 5.23:1 as text on bone.
+
+     Deliberately not amber: amber is the duplication signal and the two tags
+     routinely sit on the same chip. */
+  --review-ink: #6E5B41;
+
   /* --- ACCESSIBILITY CORRECTION 3 ------------------------------------
      Outline buttons on the maroon/black bands specced a
      rgba(255,255,255,.35) border = 2.88:1, failing 1.4.11 (3:1 for UI
@@ -64,6 +76,24 @@
   --min-grid:       860px;
   --max-setup:      880px;
   --max-map:       1080px;
+
+  /* --- THE grid column definition -----------------------------------
+     The single source of truth for the builder's five columns. The header
+     row and every week card resolve from this one value, which is what
+     makes them align.
+
+     They used to be two independent flex containers, and drifted 71px apart:
+     the header had no min-width so it collapsed to its column floors while
+     the card stack held 860px, it ignored the scroller's 11px scrollbar and
+     the card's 1px border, and it did not move when the grid scrolled
+     sideways. One definition in one scroll context removes all of that.
+
+     Reads straight off docs/design-tokens.md: lesson column caps at 340px
+     and floors at 210px; the four text columns split the remainder equally
+     with a 130px floor. */
+  --grid-cols:
+    minmax(var(--min-lesson-col), var(--w-lesson-col))
+    repeat(4, minmax(var(--min-text-col), 1fr));
 
   /* --- The dense internal-tool type scale ---------------------------
      The design system's fluid scale is for marketing pages. These tools use a

@@ -11,6 +11,8 @@ import type { CatalogIndex } from './catalog'
 export interface Placement {
   courseIndex: number
   weekIndex: number
+  /** This placement is review/refresher rather than new instruction. */
+  review: boolean
 }
 
 /** lesson id -> every place it appears, in course/week order. */
@@ -21,14 +23,23 @@ export function buildPlacements(program: Program | null): PlacementMap {
   if (!program) return map
   program.courses.forEach((course, courseIndex) => {
     course.weeks.forEach((week, weekIndex) => {
+      const review = new Set(week.reviewLessons ?? [])
       for (const id of week.lessons) {
+        const entry: Placement = { courseIndex, weekIndex, review: review.has(id) }
         const list = map.get(id)
-        if (list) list.push({ courseIndex, weekIndex })
-        else map.set(id, [{ courseIndex, weekIndex }])
+        if (list) list.push(entry)
+        else map.set(id, [entry])
       }
     })
   })
   return map
+}
+
+/** True when every placement of this lesson is review — i.e. it is never
+ *  taught as new material anywhere in the program. */
+export function isReviewOnly(placements: PlacementMap, lessonId: string): boolean {
+  const list = placements.get(lessonId)
+  return !!list && list.length > 0 && list.every((p) => p.review)
 }
 
 /** "C1·W3" — the chip on a placed lesson in the rail. */
@@ -51,6 +62,8 @@ export interface Overlap {
   placements: Placement[]
   /** True when at least two placements share a course. */
   sameCourse: boolean
+  /** At least one placement is marked review — the repeat is deliberate. */
+  anyReview: boolean
 }
 
 export function overlapFor(placements: PlacementMap, lessonId: string): Overlap | null {
@@ -62,7 +75,7 @@ export function overlapFor(placements: PlacementMap, lessonId: string): Overlap 
     if (seen.has(p.courseIndex)) { sameCourse = true; break }
     seen.add(p.courseIndex)
   }
-  return { count: list.length, placements: list, sameCourse }
+  return { count: list.length, placements: list, sameCourse, anyReview: list.some((p) => p.review) }
 }
 
 /** Every lesson placed more than once — the "Reused across courses" list. */
@@ -83,6 +96,12 @@ export interface Coverage {
   ratio: number
   complete: boolean
   unplaced: number
+  /**
+   * Placed lessons whose every placement is review. These still count toward
+   * `placed` — the lesson IS taught — but a designer wants to see how much of
+   * their coverage is refresher rather than new instruction.
+   */
+  reviewOnly: number
 }
 
 export function coverageFor(
@@ -102,6 +121,7 @@ export function coverageFor(
       ratio: total === 0 ? 0 : placed / total,
       complete: total > 0 && placed === total,
       unplaced: Math.max(0, total - placed),
+      reviewOnly: ids.filter((id) => isReviewOnly(placements, id)).length,
     }
   })
 }

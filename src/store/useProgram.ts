@@ -96,6 +96,7 @@ interface ProgramState {
   ) => void
   addLesson: (courseIndex: number, weekIndex: number, lessonId: string) => void
   removeLesson: (courseIndex: number, weekIndex: number, lessonId: string) => void
+  toggleReviewLesson: (courseIndex: number, weekIndex: number, lessonId: string) => void
   moveWeek: (courseIndex: number, from: number, to: number) => void
 }
 
@@ -368,7 +369,22 @@ export const useProgram = create<ProgramState>((set, get) => {
     removeLesson: guard((courseIndex, weekIndex, lessonId) =>
       mutate(null, (p) => {
         const week = p.courses[courseIndex]?.weeks[weekIndex]
-        if (week) week.lessons = week.lessons.filter((id) => id !== lessonId)
+        if (!week) return
+        week.lessons = week.lessons.filter((id) => id !== lessonId)
+        // Drop the review flag with the placement, or it becomes an orphan
+        // that silently reapplies if the lesson is dragged back in later.
+        week.reviewLessons = (week.reviewLessons ?? []).filter((id) => id !== lessonId)
+      }),
+    ),
+
+    toggleReviewLesson: guard((courseIndex, weekIndex, lessonId) =>
+      mutate(null, (p) => {
+        const week = p.courses[courseIndex]?.weeks[weekIndex]
+        if (!week || !week.lessons.includes(lessonId)) return
+        const current = week.reviewLessons ?? []
+        week.reviewLessons = current.includes(lessonId)
+          ? current.filter((id) => id !== lessonId)
+          : [...current, lessonId]
       }),
     ),
 

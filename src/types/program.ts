@@ -21,6 +21,17 @@ export interface Week {
   module: string
   /** Lesson ids, ordered. Duplicates within one week are rejected on drop. */
   lessons: string[]
+  /**
+   * Ids from `lessons` taught as review/refresher rather than new instruction.
+   *
+   * Per PLACEMENT, not per lesson: the same lesson is routinely new material
+   * early in a program and review later, so the flag has to belong to the week
+   * it sits in, not to the catalog entry.
+   *
+   * Optional, so programs saved before this existed load untouched; migrate.ts
+   * normalises it to [] on read.
+   */
+  reviewLessons?: string[]
   discussion: string
   assessment: string
   video: string
@@ -119,7 +130,7 @@ export const LIMITS = {
 
 /** Cells start empty. No placeholder content the user has to delete. */
 export function makeWeek(): Week {
-  return { module: '', lessons: [], discussion: '', assessment: '', video: '', tools: '' }
+  return { module: '', lessons: [], reviewLessons: [], discussion: '', assessment: '', video: '', tools: '' }
 }
 
 export function makeCourse(weeks: number): Course {

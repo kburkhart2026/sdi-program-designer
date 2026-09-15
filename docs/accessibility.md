@@ -29,6 +29,23 @@ used for something other than text.
 glyph, where 1.4.11's 3:1 applies to neither (decorative, and adjacent to a
 labelled control).
 
+### The review-lesson marker
+
+Added Sept 2026 with the review-lesson feature. The obvious choice — the brand's
+`--sdi-tan-600` (#A18E72) — was measured and **rejected**: 3.17:1 against white in
+the filled state and 2.55:1 as text on `--sdi-bone` in the outlined state, failing
+1.4.3 both ways. `--review-ink` (#6E5B41) is the lightest value in the same warm
+family that clears AA in both directions.
+
+| Use | Value | Measured | Required |
+|---|---|---|---|
+| White on the filled REVIEW tag | `--review-ink` #6E5B41 | 6.49 | 4.5 ✓ |
+| REVIEW tag text/border on `--sdi-bone` | `--review-ink` | 5.23 | 4.5 ✓ |
+| REVIEW tag on `--gray-50` (detail panel) | `--review-ink` | 6.00 | 4.5 ✓ |
+
+Deliberately not amber: `--amber-text` is the duplication signal and the two tags
+routinely appear on the same chip, so review needs its own hue.
+
 Everything else in the palette passes and was left alone:
 
 | Pair | Ratio |
@@ -74,6 +91,18 @@ point they would look for it.
 - `Alt+↑` / `Alt+↓` move the week; the new position is announced.
 - Module title, lessons and all four text fields travel with it, exactly as the
   pointer drag does — both paths call the same `moveWeek` action.
+
+### Marking a lesson as review
+
+- The REVIEW tag on a chip is a real `<button>` with `aria-pressed`, hidden at
+  `opacity: 0` until the chip is hovered or focused so the dense column stays
+  quiet, and always visible once marked.
+- `R` on a focused chip toggles it without reaching for the mouse, matching the
+  `Delete` shortcut already on that element.
+- The lesson detail panel lists **one row per placement** with its own toggle —
+  review is per placement, so a single control would be ambiguous for a lesson
+  sitting in several weeks.
+- Every toggle is announced through the existing live region.
 
 ### Removing a lesson
 

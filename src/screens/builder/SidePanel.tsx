@@ -51,6 +51,22 @@ export function SidePanel({ index, program }: { index: CatalogIndex; program: Pr
 
   return (
     <aside className={s.right} id="side-panel" aria-label="Outcomes and coverage">
+      {/* Panel header, mirroring the lesson panel's on the left. The chevron
+          points the other way because the panel collapses to the right. */}
+      <div className={s.sidePanelHead}>
+        <button
+          className={s.collapse}
+          onClick={() => setUi('sideHidden', true)}
+          aria-expanded
+          aria-controls="side-panel"
+          aria-label="Collapse outcomes and coverage"
+          title="Collapse"
+        >
+          ›
+        </button>
+        <Eyebrow>Outcomes &amp; coverage</Eyebrow>
+      </div>
+
       {/* ---------- outcomes ---------- */}
       <div className={s.sideSection}>
         <button
@@ -166,6 +182,7 @@ function LessonDetail({
   const { canEdit } = useRole()
   const placements = useMemo(() => buildPlacements(program), [program])
   const addLesson = useProgram((st) => st.addLesson)
+  const toggleReviewLesson = useProgram((st) => st.toggleReviewLesson)
   const courseIndex = useUi((u) => u.course)
   const announce = useUi((u) => u.announce)
   const [targetWeek, setTargetWeek] = useState(0)
@@ -174,6 +191,7 @@ function LessonDetail({
   if (!lesson) return null
 
   const overlap = overlapFor(placements, lessonId)
+  const mine = placements.get(lessonId) ?? []
   const weeks = program.courses[courseIndex]?.weeks.length ?? 0
 
   return (
@@ -184,13 +202,56 @@ function LessonDetail({
       </div>
 
       {overlap && (
-        <p className={`${s.overlap} ${overlap.sameCourse ? s.overlapStrong : ''}`} role="status">
+        <p
+          className={`${s.overlap} ${overlap.sameCourse && !overlap.anyReview ? s.overlapStrong : ''}`}
+          role="status"
+        >
           Placed {overlap.count} times:{' '}
           {overlap.placements.map((p) => formatPlacement(p)).join(', ')}.{' '}
-          {overlap.sameCourse
-            ? 'Two of these are in the same course — almost certainly a duplicate.'
-            : 'Fine if the depth differs between courses.'}
+          {/* Marking a repeat as review IS the user saying the repeat is
+              deliberate, so the warning stops arguing with them. */}
+          {overlap.anyReview
+            ? 'One of these is marked review, so the repeat looks intentional.'
+            : overlap.sameCourse
+              ? 'Two of these are in the same course — almost certainly a duplicate.'
+              : 'Fine if the depth differs between courses.'}
         </p>
+      )}
+
+      {/* Review is a property of each PLACEMENT, so a single toggle here would
+          be ambiguous for a lesson sitting in several weeks. One row each. */}
+      {mine.length > 0 && (
+        <div className={s.placementList}>
+          <Eyebrow as="h3">{mine.length === 1 ? 'Placement' : 'Placements'}</Eyebrow>
+          {mine.map((p) => (
+            <div className={s.placementRow} key={`${p.courseIndex}-${p.weekIndex}`}>
+              <span className={s.placementWhere}>{formatPlacement(p)}</span>
+              {canEdit ? (
+                <button
+                  className={`${s.chipReview} ${p.review ? s.chipReviewOn : ''}`}
+                  style={{ opacity: 1 }}
+                  aria-pressed={p.review}
+                  onClick={() => {
+                    toggleReviewLesson(p.courseIndex, p.weekIndex, lessonId)
+                    announce(
+                      `${lesson.name} in course ${p.courseIndex + 1} week ${p.weekIndex + 1} ${
+                        p.review ? 'no longer marked' : 'marked'
+                      } as a review lesson.`,
+                    )
+                  }}
+                >
+                  Review
+                </button>
+              ) : (
+                p.review && (
+                  <span className={`${s.chipReview} ${s.chipReviewOn}`} style={{ opacity: 1 }}>
+                    Review
+                  </span>
+                )
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       <Eyebrow as="h3">Counts toward</Eyebrow>
@@ -297,6 +358,14 @@ function CoveragePanel({
                 </div>
                 {c.unplaced > 0 && (
                   <div className={s.barNote}>{plural(c.unplaced, 'lesson')} still unplaced</div>
+                )}
+                {/* The ratio above is unchanged — a review lesson is still
+                    taught. This just shows how much of the coverage is
+                    refresher rather than new instruction. */}
+                {c.reviewOnly > 0 && (
+                  <div className={s.barNote}>
+                    {c.reviewOnly} of {c.placed} placed {c.reviewOnly === 1 ? 'is' : 'are'} review
+                  </div>
                 )}
               </div>
             ))

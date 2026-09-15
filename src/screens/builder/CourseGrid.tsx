@@ -88,28 +88,33 @@ export function CourseGrid({ index, program }: { index: CatalogIndex; program: P
         </div>
       </header>
 
-      {/* Column headers appear once, here — not repeated inside every card. */}
-      <div className={s.colHeads} aria-hidden="true">
-        <div className={`${s.colHead} ${s.colLesson}`}>Week · module · lessons</div>
-        <div className={`${s.colHead} ${s.colText}`}>Discussion</div>
-        <div className={`${s.colHead} ${s.colText}`}>Assessment</div>
-        <div className={`${s.colHead} ${s.colText}`}>Video needs</div>
-        <div className={`${s.colHead} ${s.colText}`}>Tools needed</div>
-      </div>
-
       <div className={s.weekScroll}>
-        <div className={s.weekStack}>
-          {course.weeks.map((week, i) => (
-            <WeekCard
-              key={i}
-              index={index}
-              week={week}
-              courseIndex={courseIndex}
-              weekIndex={i}
-              placements={placements}
-              active={i === weekIndex}
-            />
-          ))}
+        {/* Headers and cards share one wrapper, so they share one width and
+            one horizontal scroll offset. Keeping the header outside the
+            scroller is what let the two drift 71px apart. */}
+        <div className={s.gridInner}>
+          {/* Column headers appear once, here — not repeated inside every card. */}
+          <div className={s.colHeads} aria-hidden="true">
+            <div className={s.colHead}>Week · module · lessons</div>
+            <div className={s.colHead}>Discussion</div>
+            <div className={s.colHead}>Assessment</div>
+            <div className={s.colHead}>Video needs</div>
+            <div className={s.colHead}>Tools needed</div>
+          </div>
+
+          <div className={s.weekStack}>
+            {course.weeks.map((week, i) => (
+              <WeekCard
+                key={i}
+                index={index}
+                week={week}
+                courseIndex={courseIndex}
+                weekIndex={i}
+                placements={placements}
+                active={i === weekIndex}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

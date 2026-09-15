@@ -34,6 +34,7 @@ const COLUMNS = [
   'Video needs',
   'Tools needed',
   'Link',
+  'Review',
 ] as const
 
 /** RFC 4180 quoting: always quote, double any embedded quote. */
@@ -57,8 +58,10 @@ export function exportCsv(index: CatalogIndex, program: Program): void {
       ]
       const tail = [week.discussion, week.assessment, week.video, week.tools]
 
+      const review = new Set(week.reviewLessons ?? [])
+
       if (week.lessons.length === 0) {
-        rows.push([...base, '', '', '', ...tail, ''].map(cell).join(','))
+        rows.push([...base, '', '', '', ...tail, '', ''].map(cell).join(','))
         return
       }
       for (const id of week.lessons) {
@@ -71,6 +74,7 @@ export function exportCsv(index: CatalogIndex, program: Program): void {
             lesson?.dept ?? '',
             ...tail,
             lessonUrl(lesson),
+            review.has(id) ? 'Yes' : '',
           ]
             .map(cell)
             .join(','),
