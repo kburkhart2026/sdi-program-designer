@@ -65,6 +65,52 @@ overlap and coverage features. `credentials[].classes` is the per-credential ord
 
 Note the key is `classes` in the JSON but the UI must say **lessons** everywhere.
 
+### The `Other` credential (added Sept 2026)
+
+Tooling U publishes more courses than the SME certification mappings reference.
+A catalog export (`ToolingU-SME-Catalog.xlsx`, sheet `Online Classes`) listed 639
+courses; 242 were already here, leaving **397 with no SME credential at all**.
+
+Those 397 are carried under a synthetic credential, `Other`
+(`kind: "other"`, title "Tooling U catalog (no SME credential)"), so designers
+can pull non-credential content into a program. Because each carries
+`creds: ["Other"]` and no program targets `Other`, they contribute nothing to
+any credential's coverage — existing programs are unaffected.
+
+Two fields arrived with them, both optional:
+
+| Field | Meaning |
+|---|---|
+| `topic` | The export's `FunctionalArea` — one of 11 broad headings. The lesson rail groups `Other` by this instead of by `dept`, because those 397 span 40 departments but only 11 topics. Backfilled onto the 242 overlapping SME lessons too. |
+| `description` | Course description from the export. Shown in the lesson detail panel. |
+
+`dept` still holds the real Tooling U Department, so the program map's
+"content mix by department" is unchanged.
+
+**Regenerate, never hand-edit:**
+
+```bash
+python3 scripts/merge_tooling_u_catalog.py ~/Downloads/ToolingU-SME-Catalog.xlsx
+```
+
+It is idempotent — the `Other` credential and its lessons are dropped and
+rebuilt each run, so a newer export removes withdrawn courses rather than
+accumulating them. It never touches an SME credential's lesson list.
+
+Two caveats from the September 2026 export:
+
+- `ClassLink` was empty in all 640 rows, so every `Other` lesson has
+  `url: null` and "Open on Tooling U" falls back to the catalog home page.
+- 16 lessons our SME mappings require were **absent** from the export — ten
+  Supervisor Essentials/leadership courses, four quality/Lean, and Industrial
+  Network Integration 260. None matched a different ID by name, so they are not
+  renumbered. Worth querying with Tooling U; if any are retired, the affected
+  CMfgT / CMfgE / Lean Bronze mappings are incomplete. (A further 25 absences
+  are the Spanish-equivalent courses, expected since the export is English-only.)
+
+File size went from 158 KB to 682 KB (23 KB to 148 KB gzipped), almost entirely
+descriptions.
+
 ### Counts
 
 16 credentials, 283 unique lessons, 194 lessons shared by two or more credentials.

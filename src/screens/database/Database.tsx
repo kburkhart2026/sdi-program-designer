@@ -91,8 +91,14 @@ export function Database({ index }: { index: CatalogIndex }) {
   const sharedHere = current.classes.filter((c) => (shareCount.get(c.id) ?? 1) > 1).length
 
   const summary = hasLessons
-    ? `${current.classes.length} Tooling U lessons across ${plural(deptCount, 'department')}. ` +
-      `${sharedHere} of them also count toward another credential.`
+    ? current.kind === 'other'
+      // These map to no SME credential by definition, so the "also counts
+      // toward" sentence would always read "0 of them" and say nothing.
+      ? `${current.classes.length} Tooling U lessons across ${plural(deptCount, 'department')} ` +
+        `that map to no SME certification. Available to build with; they do not ` +
+        `contribute to any credential's coverage.`
+      : `${current.classes.length} Tooling U lessons across ${plural(deptCount, 'department')}. ` +
+        `${sharedHere} of them also count toward another credential.`
     : 'No lesson mapping in the workbook — this credential is covered by review materials and reading lists.'
 
   // The deduplicated entry knows every credential a lesson counts toward; the
@@ -163,7 +169,11 @@ export function Database({ index }: { index: CatalogIndex }) {
             <div className={s.headRow}>
               <div className={s.headMain}>
                 <div className={s.headEyebrow}>
-                  {current.kind === 'micro' ? 'Microcredential' : `Certification · ${current.code}`}
+                  {current.kind === 'micro'
+                    ? 'Microcredential'
+                    : current.kind === 'other'
+                      ? 'Tooling U catalog'
+                      : `Certification · ${current.code}`}
                 </div>
                 <h1 className={s.headTitle}>{current.title}</h1>
                 <p className={s.headSummary}>{summary}</p>

@@ -132,12 +132,17 @@ export interface DeptGroup {
   lessons: CatalogClass[]
 }
 
-export function groupByDept(lessons: CatalogClass[]): DeptGroup[] {
+/**
+ * Group the rail. `by: 'topic'` is used for the `Other` credential, whose 397
+ * courses span 30+ departments but only 11 functional areas.
+ */
+export function groupByDept(lessons: CatalogClass[], by: 'dept' | 'topic' = 'dept'): DeptGroup[] {
   const map = new Map<string, CatalogClass[]>()
   for (const l of lessons) {
-    const list = map.get(l.dept)
+    const key = (by === 'topic' ? l.topic : l.dept) || l.dept || 'Unassigned'
+    const list = map.get(key)
     if (list) list.push(l)
-    else map.set(l.dept, [l])
+    else map.set(key, [l])
   }
   const collate = (a: string, b: string) => a.localeCompare(b, 'en', { sensitivity: 'base' })
   return [...map.entries()]

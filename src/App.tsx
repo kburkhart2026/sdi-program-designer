@@ -214,8 +214,17 @@ export default function App() {
         </div>
       )}
 
-      {role === 'local' && isConfigured() && (
-        <div className={s.localNote}>Local drafts only — open an editor link to publish.</div>
+      {/* No content repo configured — local development. */}
+      {role === 'local' && (
+        <div className={s.localNote}>Local drafts only — no content repo is configured.</div>
+      )}
+
+      {/* Configured, but this browser has unlocked nothing. Read-only and
+          empty, so say why rather than showing a blank app. */}
+      {role === 'viewer' && !token && isConfigured() && (
+        <div className={s.localNote}>
+          View only — open an editor or viewer link to sign in.
+        </div>
       )}
 
       {/* One polite live region for drops, moves, filters and removals. */}

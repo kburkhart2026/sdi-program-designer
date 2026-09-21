@@ -43,7 +43,11 @@ export function LessonPanel({
     () => filterLessons(index, { credFilter, query: q, unplacedOnly, placements }),
     [index, credFilter, q, unplacedOnly, placements],
   )
-  const groups = useMemo(() => groupByDept(lessons), [lessons])
+  // The `Other` credential spans 30+ departments but only 11 functional areas,
+  // so it groups by topic. Every other view keeps the department headings.
+  const cred = index.credByCode.get(credFilter)
+  const groupBy = cred?.kind === 'other' ? 'topic' : 'dept'
+  const groups = useMemo(() => groupByDept(lessons, groupBy), [lessons, groupBy])
 
   if (railHidden) {
     return (
@@ -83,11 +87,28 @@ export function LessonPanel({
           onChange={(e) => setUi('credFilter', e.target.value)}
         >
           <option value={ALL_CREDS}>All lessons ({index.totalLessons})</option>
-          {index.credCodes.map((code) => (
-            <option key={code} value={code}>
-              {code} ({index.credLessonCount.get(code) ?? 0})
-            </option>
-          ))}
+          {/* Two groups: credential-bearing SME certifications, and the
+              catalog courses that map to none of them. */}
+          <optgroup label="SME certifications">
+            {index.credCodes
+              .filter((code) => index.credByCode.get(code)?.kind !== 'other')
+              .map((code) => (
+                <option key={code} value={code}>
+                  {code} ({index.credLessonCount.get(code) ?? 0})
+                </option>
+              ))}
+          </optgroup>
+          {index.credCodes.some((code) => index.credByCode.get(code)?.kind === 'other') && (
+            <optgroup label="Tooling U catalog">
+              {index.credCodes
+                .filter((code) => index.credByCode.get(code)?.kind === 'other')
+                .map((code) => (
+                  <option key={code} value={code}>
+                    {code} ({index.credLessonCount.get(code) ?? 0})
+                  </option>
+                ))}
+            </optgroup>
+          )}
         </select>
 
         <label className="sr-only" htmlFor="lesson-search">
@@ -156,7 +177,14 @@ export function LessonPanel({
                     setUi('over', null)
                   }}
                 >
-                  <span className={s.lessonRowName}>{lesson.name}</span>
+                  <span className={s.lessonRowName}>
+                    {lesson.name}
+                    {/* Under a topic heading the department is no longer implied
+                        by the group, so surface it per row. */}
+                    {groupBy === 'topic' && lesson.dept && (
+                      <span className={s.lessonRowDept}>{lesson.dept}</span>
+                    )}
+                  </span>
                   {placed && placed[0] && (
                     <span className={s.placedChip} title={`Placed in ${plural(placed.length, 'place')}`}>
                       {formatPlacement(placed[0])}

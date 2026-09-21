@@ -199,7 +199,9 @@ function LessonDetail({
       <h2 className={s.detailName}>{lesson.name}</h2>
       <div className={s.detailMeta}>
         {lesson.id} · {lesson.dept}
+        {lesson.topic && lesson.topic !== lesson.dept ? ` · ${lesson.topic}` : ''}
       </div>
+      {lesson.description && <p className={s.detailDesc}>{lesson.description}</p>}
 
       {overlap && (
         <p

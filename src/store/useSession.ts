@@ -78,6 +78,28 @@ function cache(key: string, value: string): void {
 
 let syncClearTimer: ReturnType<typeof setTimeout> | undefined
 
+/**
+ * Show the password gate for a role.
+ *
+ * The key file is fetched BEFORE the gate renders, so a broken deployment says
+ * so up front instead of silently rejecting every password the user tries.
+ */
+async function openGate(
+  role: Exclude<Role, 'local'>,
+  set: (partial: Partial<SessionState>) => void,
+): Promise<void> {
+  const file = role === 'viewer' ? VIEWER_KEY_FILE : EDITOR_KEY_FILE
+  const rec = await fetchVault(file)
+  set({
+    role,
+    gateOpen: true,
+    gateFile: file,
+    gateRecord: rec,
+    gateUnavailable: rec ? '' : `This link is not set up yet — ${file} was not found.`,
+    ready: false,
+  })
+}
+
 export const useSession = create<SessionState>((set, get) => ({
   role: 'local',
   token: '',
@@ -93,33 +115,58 @@ export const useSession = create<SessionState>((set, get) => ({
   storageAlarm: false,
 
   async init() {
-    const role = roleFromHash()
+    const hinted = roleFromHash()
 
-    // Local mode: nothing to unlock, and nothing to talk to.
-    if (role === 'local' || !isConfigured()) {
-      set({ role: isConfigured() ? role : 'local', ready: true, gateOpen: false })
+    // No content repo configured: local development, nothing to protect and
+    // nothing to talk to. This is the ONLY state in which 'local' — which is
+    // editable — is allowed.
+    if (!isConfigured()) {
+      set({ role: 'local', ready: true, gateOpen: false })
       return
     }
 
-    const lsKey = role === 'viewer' ? LS_VIEWER_TOKEN : LS_EDITOR_TOKEN
-    const existing = cached(lsKey)
-    if (existing) {
-      set({ role, token: existing, ready: true, gateOpen: false })
+    /* Configured. Everything below is an access decision.
+     *
+     * The bug this replaces: roleFromHash() returned 'local' for any URL
+     * without #v or #e, and canEdit was `role !== 'viewer'`, so 'local' could
+     * edit. A viewer who lost the fragment — or any anonymous visitor to the
+     * bare Pages URL — got the full builder. They could not publish, which is
+     * exactly how it surfaced. Nothing leaked (no token, so no content), but
+     * "view only" was not enforced.
+     *
+     * Now: editing requires an unlocked EDITOR token, and nothing else grants it.
+     */
+
+    // An explicit fragment is a request to use that role — honour it, gate and all.
+    if (hinted === 'viewer' || hinted === 'editor') {
+      const lsKey = hinted === 'viewer' ? LS_VIEWER_TOKEN : LS_EDITOR_TOKEN
+      const existing = cached(lsKey)
+      if (existing) {
+        set({ role: hinted, token: existing, ready: true, gateOpen: false })
+        return
+      }
+      return openGate(hinted, set)
+    }
+
+    // No fragment. Fall back on what this browser has already unlocked.
+    // Viewer is checked FIRST so that a browser which has ever opened a
+    // view-only link stays read-only when the fragment is dropped — losing #v
+    // must never be a route to editing.
+    const viewerToken = cached(LS_VIEWER_TOKEN)
+    if (viewerToken) {
+      set({ role: 'viewer', token: viewerToken, ready: true, gateOpen: false })
+      return
+    }
+    const editorToken = cached(LS_EDITOR_TOKEN)
+    if (editorToken) {
+      set({ role: 'editor', token: editorToken, ready: true, gateOpen: false })
       return
     }
 
-    // Fetch the key file BEFORE showing the gate, so a broken deployment says
-    // so instead of silently rejecting every password the user tries.
-    const file = role === 'viewer' ? VIEWER_KEY_FILE : EDITOR_KEY_FILE
-    const rec = await fetchVault(file)
-    set({
-      role,
-      gateOpen: true,
-      gateFile: file,
-      gateRecord: rec,
-      gateUnavailable: rec ? '' : `This link is not set up yet — ${file} was not found.`,
-      ready: false,
-    })
+    // Nothing unlocked: read-only, and no token, so no content either.
+    set({ role: 'viewer', token: '', ready: true, gateOpen: false })
+    return
+
   },
 
   async submitPassword(password) {

@@ -36,8 +36,9 @@ export interface CatalogCredential {
   code: string
   title: string
   source: string
-  /** Present only for Tooling U microcredentials. */
-  kind?: 'micro'
+  /** 'micro' = Tooling U microcredential. 'other' = the synthetic credential
+   *  holding catalog courses that map to no SME certification. */
+  kind?: 'micro' | 'other'
   /** The per-credential ordered list. Empty for Lean Silver/Gold and CMTSE. */
   classes: CatalogCredentialClass[]
   labs?: CatalogLab[]
@@ -54,6 +55,15 @@ export interface CatalogClass {
   url: string | null
   /** Every credential this lesson counts toward. Powers overlap + coverage. */
   creds: string[]
+  /**
+   * Tooling U FunctionalArea — one of 11 broad headings. Present for any
+   * lesson the catalog export knows about. The lesson rail groups the `Other`
+   * credential by this instead of by department, because 11 headings navigate
+   * far better than the 30+ departments those 397 courses span.
+   */
+  topic?: string
+  /** Course description from the catalog export. Shown in the detail panel. */
+  description?: string
 }
 
 export interface Catalog {

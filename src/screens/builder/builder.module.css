@@ -618,3 +618,23 @@
   font-size: var(--fs-meta);
   color: var(--gray-600);
 }
+
+/* Department line under a lesson name, shown only when the rail is grouped by
+   topic (the `Other` credential) and the heading no longer implies it. */
+.lessonRowDept {
+  display: block;
+  font-size: 9.5px;
+  color: var(--text-quiet);
+  margin-top: 1px;
+}
+
+/* Course description in the lesson detail panel, from the Tooling U export. */
+.detailDesc {
+  font-size: var(--fs-row);
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin: 8px 0 11px;
+  max-height: 168px;
+  overflow-y: auto;
+  text-wrap: pretty;
+}
